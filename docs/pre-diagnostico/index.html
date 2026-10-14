@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pré-diagnóstico POM</title>
+<meta name="description" content="Pré-diagnóstico gratuito de Produto, Operação e Mercado para pequenas empresas de Manaus. Resultado na hora.">
+<style>
+  :root {
+    --bg: #f6f3ee;
+    --card: #ffffff;
+    --ink: #14302b;
+    --muted: #55645f;
+    --line: #e2ddd4;
+    --brand: #0f6b5c;
+    --brand-ink: #ffffff;
+    --brand-soft: #e3f1ed;
+    --accent: #b85f12;
+    --accent-soft: #fbefe2;
+    --lv1: #b93c0e;
+    --lv2: #b7700a;
+    --lv3: #0f766e;
+    --lv4: #1b7a3a;
+    --track: #ece7de;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 17px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .wrap { max-width: 680px; margin: 0 auto; padding: 20px 16px 64px; }
+  header.brand { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; color: var(--muted); font-size: 14px; }
+  .mark { width: 40px; height: 40px; border-radius: 50%; background: var(--brand); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 12px; letter-spacing: .3px; flex: none; }
+  h1 { font-size: 30px; line-height: 1.2; margin: 6px 0 12px; letter-spacing: -.3px; }
+  h2 { font-size: 23px; line-height: 1.25; margin: 0 0 6px; }
+  h3 { font-size: 18px; margin: 0 0 6px; }
+  p { margin: 0 0 12px; }
+  .lead { font-size: 18px; color: var(--muted); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
+  .pill { display: inline-block; font-size: 13px; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: var(--brand-soft); color: var(--brand); }
+  ul.ticks { list-style: none; padding: 0; margin: 14px 0; }
+  ul.ticks li { padding-left: 28px; position: relative; margin-bottom: 8px; }
+  ul.ticks li::before { content: ""; position: absolute; left: 4px; top: 8px; width: 12px; height: 7px; border-left: 2.5px solid var(--brand); border-bottom: 2.5px solid var(--brand); transform: rotate(-45deg); }
+  .btn { appearance: none; border: 0; border-radius: 12px; padding: 15px 22px; font: inherit; font-weight: 650; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; }
+  .btn-primary { background: var(--brand); color: var(--brand-ink); }
+  .btn-primary:hover { filter: brightness(1.08); }
+  .btn-ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--line); }
+  .btn-wa { background: #1f8f4e; color: #fff; width: 100%; font-size: 18px; }
+  .btn:focus-visible, input:focus-visible, textarea:focus-visible, .opt input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .nav { display: flex; gap: 10px; justify-content: space-between; margin-top: 8px; }
+  .nav .btn-primary { flex: 1; }
+  .progress { position: sticky; top: 0; z-index: 2; background: var(--bg); padding: 10px 0 12px; margin-bottom: 8px; }
+  .progress .meta { display: flex; justify-content: space-between; font-size: 14px; color: var(--muted); margin-bottom: 6px; }
+  .bar { height: 8px; background: var(--track); border-radius: 99px; overflow: hidden; }
+  .bar > i { display: block; height: 100%; background: var(--brand); border-radius: 99px; transition: width .3s; }
+  .field { margin: 22px 0; }
+  .field > .label { display: block; font-weight: 650; margin-bottom: 4px; }
+  .hint { font-size: 14px; color: var(--muted); margin-bottom: 8px; }
+  input[type=text], input[type=tel], textarea {
+    width: 100%; font: inherit; padding: 13px 14px; border: 1.5px solid var(--line); border-radius: 12px; background: #fff; color: var(--ink);
+  }
+  textarea { min-height: 96px; resize: vertical; }
+  .opts { display: grid; gap: 8px; margin-top: 8px; }
+  .opt { position: relative; display: block; cursor: pointer; }
+  .opt input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+  .opt span { display: block; padding: 13px 14px 13px 44px; border: 1.5px solid var(--line); border-radius: 12px; background: #fff; position: relative; }
+  .opt span::before { content: ""; position: absolute; left: 14px; top: 50%; width: 18px; height: 18px; margin-top: -9px; border: 2px solid #9aa7a2; border-radius: 50%; background: #fff; }
+  .opt input:checked + span { border-color: var(--brand); background: var(--brand-soft); }
+  .opt input:checked + span::before { border-color: var(--brand); box-shadow: inset 0 0 0 4px #fff; background: var(--brand); }
+  .check { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; color: var(--muted); }
+  .check input { width: 20px; height: 20px; margin-top: 3px; flex: none; accent-color: var(--brand); }
+  .err { color: var(--lv1); font-size: 14px; font-weight: 600; margin-top: 6px; }
+  .field.invalid input[type=text], .field.invalid input[type=tel], .field.invalid textarea, .field.invalid .opt span { border-color: var(--lv1); }
+  .small { font-size: 14px; color: var(--muted); }
+  .center { text-align: center; }
+  .linkbtn { background: none; border: 0; color: var(--muted); text-decoration: underline; font: inherit; font-size: 14px; cursor: pointer; padding: 8px; }
+
+  /* Resultado */
+  .score-row { margin: 16px 0; }
+  .score-row .top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 6px; }
+  .score-row .name { font-weight: 700; }
+  .lv { font-size: 13px; font-weight: 700; padding: 2px 9px; border-radius: 99px; color: #fff; white-space: nowrap; }
+  .lv-1 { background: var(--lv1); } .lv-2 { background: var(--lv2); } .lv-3 { background: var(--lv3); } .lv-4 { background: var(--lv4); }
+  .fill-1 { background: var(--lv1) !important; } .fill-2 { background: var(--lv2) !important; } .fill-3 { background: var(--lv3) !important; } .fill-4 { background: var(--lv4) !important; }
+  .score-row p { font-size: 15px; color: var(--muted); margin: 6px 0 0; }
+  .priority { border: 2px solid var(--brand); }
+  .priority .kicker, .kicker { font-size: 13px; text-transform: uppercase; letter-spacing: .8px; font-weight: 700; color: var(--brand); margin-bottom: 4px; }
+  .callout { background: var(--accent-soft); border-left: 4px solid var(--accent); border-radius: 10px; padding: 14px 16px; margin: 14px 0; }
+  .callout strong { color: var(--accent); }
+  .quote { border-left: 4px solid var(--brand); padding: 6px 0 6px 14px; font-style: italic; color: var(--ink); margin: 10px 0 14px; }
+  .months { display: grid; gap: 10px; margin-top: 10px; }
+  .month { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .month b { color: var(--brand); display: block; font-size: 14px; text-transform: uppercase; letter-spacing: .6px; }
+  .cta { background: var(--ink); color: #fff; border: 0; }
+  .cta p, .cta .small { color: #d8e3df; }
+  .cta h2 { color: #fff; }
+  .warn { background: #fff3cd; color: #6b4e00; border-radius: 10px; padding: 10px 12px; font-size: 14px; margin-top: 10px; }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 12px; }
+  footer { margin-top: 28px; text-align: center; font-size: 13px; color: var(--muted); }
+  [hidden] { display: none !important; }
+
+  @media (min-width: 560px) {
+    h1 { font-size: 36px; }
+    .wrap { padding-top: 32px; }
+    .months { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media print {
+    body { background: #fff; font-size: 13px; }
+    .progress, .nav, .actions, .cta .btn, .noprint { display: none !important; }
+    .card { break-inside: avoid; border-color: #ccc; }
+    .cta { background: #fff; color: var(--ink); border: 1px solid #ccc; }
+    .cta h2, .cta p, .cta .small { color: var(--ink); }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="brand">
+    <div class="mark" aria-hidden="true">POM</div>
+    <div>Clarissa Oliveira · Consultoria para pequenas empresas de Manaus</div>
+  </header>
+
+  <!-- Abertura -->
+  <section id="intro">
+    <span class="pill">Gratuito · resultado na hora</span>
+    <h1>Onde a sua empresa está travando?</h1>
+    <p class="lead">Responda algumas perguntas rápidas sobre <strong>Produto, Operação e Mercado</strong> e receba uma leitura inicial do seu negócio: a prioridade sugerida, o que ela custa se ficar para depois e um primeiro passo para aplicar ainda esta semana.</p>
+    <div class="card">
+      <ul class="ticks" style="margin:0">
+        <li>Leva cerca de 5 minutos</li>
+        <li>O resultado aparece nesta tela, assim que você terminar</li>
+        <li>Suas respostas servem apenas para avaliar a sua empresa</li>
+      </ul>
+    </div>
+    <p class="small">Este pré-diagnóstico também é a aplicação para o <strong>Acompanhamento POM 90 dias</strong>, a turma fundadora da minha consultoria individual, com cinco vagas.</p>
+    <div class="nav"><button class="btn btn-primary" id="start" type="button">Começar o pré-diagnóstico</button></div>
+    <p class="center" id="resumeBox" hidden><button class="linkbtn" id="resume" type="button">Continuar de onde parei</button></p>
+  </section>
+
+  <!-- Perguntas -->
+  <section id="form" hidden>
+    <div class="progress" aria-live="polite">
+      <div class="meta"><span id="stepName"></span><span id="stepCount"></span></div>
+      <div class="bar"><i id="barFill" style="width:0"></i></div>
+    </div>
+    <form id="stepForm" novalidate>
+      <h2 id="stepTitle"></h2>
+      <p class="small" id="stepIntro"></p>
+      <div id="fields"></div>
+      <div class="nav">
+        <button class="btn btn-ghost" id="back" type="button">Voltar</button>
+        <button class="btn btn-primary" id="next" type="submit">Continuar</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Resultado -->
+  <section id="result" hidden></section>
+
+  <footer>Clarissa Oliveira · Consultoria Produto, Operação e Mercado · Manaus/AM</footer>
+</div>
+
+<script>
+/* ================== CONFIGURAÇÃO ==================
+   WHATSAPP: seu número com 55 + DDD + número, só dígitos. Ex.: 5592991234567
+   SHEETS_WEBHOOK_URL: opcional. URL do Apps Script (veja o guia) para gravar
+   cada resposta numa planilha Google. Deixe "" para não usar.            */
+const CONFIG = {
+  WHATSAPP: "55920000000000",
+  SHEETS_WEBHOOK_URL: "",
+  STORAGE_KEY: "pom-prediagnostico-v1"
+};
+/* ================================================== */
+
+const PILLARS = {
+  P: { name: "Produto", short: "o que você vende e por que o cliente escolhe você" },
+  O: { name: "Operação", short: "como a empresa entrega e funciona no dia a dia" },
+  M: { name: "Mercado", short: "como você chega aos clientes e transforma oportunidades em vendas" }
+};
+
+const STEPS = [
+  { id: "voce", title: "Sobre você", intro: "Para eu saber com quem estou falando.", fields: [
+    { id: "nome", type: "text", label: "Seu nome", required: true, autocomplete: "given-name" },
+    { id: "whatsapp", type: "tel", label: "Seu WhatsApp com DDD", placeholder: "(92) 9 0000-0000", required: true, autocomplete: "tel" },
+    { id: "empresa", type: "text", label: "Nome da empresa", required: true, autocomplete: "organization" },
+    { id: "cidade", type: "choice", label: "Onde fica a empresa?", required: true, options: ["Manaus", "Outra cidade do Amazonas", "Outro estado"] },
+    { id: "papel", type: "choice", label: "Qual é o seu papel na empresa?", required: true, options: ["Dono(a) ou sócio(a), eu decido", "Gestor(a), participo da decisão", "Outro"] }
+  ]},
+  { id: "empresa", title: "Sobre a empresa", intro: "Só para entender o porte e o momento do negócio.", fields: [
+    { id: "segmento", type: "choice", label: "Qual é o segmento?", required: true, options: ["Comércio ou loja", "Serviços para empresas", "Serviços para pessoas", "Alimentação", "Indústria", "Outro"] },
+    { id: "tempo", type: "choice", label: "Há quanto tempo a empresa funciona?", required: true, options: ["Ainda não abri", "Menos de 1 ano", "1 a 3 anos", "3 a 10 anos", "Mais de 10 anos"] },
+    { id: "equipe", type: "choice", label: "Quantas pessoas trabalham na empresa, incluindo você?", required: true, options: ["Só eu", "2 a 5", "6 a 15", "16 a 50", "Mais de 50"] },
+    { id: "faturamento", type: "choice", label: "Faturamento mensal aproximado", hint: "Serve apenas para eu entender o porte. Se preferir, escolha a última opção.", required: true, options: ["Até R$ 20 mil", "R$ 20 mil a R$ 50 mil", "R$ 50 mil a R$ 150 mil", "R$ 150 mil a R$ 500 mil", "Acima de R$ 500 mil", "Prefiro não informar"] }
+  ]},
+  { id: "produto", pillar: "P", title: "Produto", intro: "O que você vende e por que o cliente escolhe você. Responda pensando em como é hoje, não em como gostaria que fosse.", fields: [
+    { id: "p1", type: "score", label: "Se eu perguntar a um cliente por que ele compra de você e não do concorrente, ele provavelmente diria:", options: [
+      [1, "“Pelo preço” ou “não sei, é o que tinha”"],
+      [2, "“Porque já conheço” ou “porque é perto”"],
+      [3, "“Pelo atendimento”, mas sem saber explicar o que é diferente"],
+      [4, "Ele sabe dizer exatamente qual é o seu diferencial"] ] },
+    { id: "p2", type: "score", label: "Sobre os preços dos seus produtos ou serviços:", options: [
+      [1, "Defino no olho ou olhando o preço do concorrente"],
+      [2, "Tenho uma tabela, mas não sei a margem de cada item"],
+      [3, "Conheço a margem da maioria dos itens"],
+      [4, "Conheço as margens e reviso os preços com frequência"] ] },
+    { id: "p3", type: "score", label: "Nos últimos 12 meses, você lançou ou melhorou alguma oferta (novo serviço, combo, plano, pacote)?", options: [
+      [1, "Não, vendemos o mesmo de sempre"],
+      [2, "Pensei em algo, mas não tirei do papel"],
+      [3, "Lancei, mas não medi se deu certo"],
+      [4, "Lancei e acompanhei o resultado"] ] }
+  ]},
+  { id: "operacao", pillar: "O", title: "Operação", intro: "Como a empresa entrega e funciona no dia a dia.", fields: [
+    { id: "o1", type: "score", label: "Se você ficar 15 dias sem aparecer na empresa:", options: [
+      [1, "Ela praticamente para"],
+      [2, "Funciona, mas com muitos erros e ligações para mim"],
+      [3, "Funciona razoavelmente, com alguns problemas"],
+      [4, "Funciona normalmente"] ] },
+    { id: "o2", type: "score", label: "As tarefas principais (atendimento, pedido, entrega, cobrança):", options: [
+      [1, "Estão na cabeça das pessoas"],
+      [2, "Cada um faz do seu jeito"],
+      [3, "Algumas estão definidas ou escritas"],
+      [4, "Estão definidas e a equipe segue"] ] },
+    { id: "o3", type: "score", label: "Atrasos, retrabalho ou reclamações de clientes:", options: [
+      [1, "Acontecem toda semana"],
+      [2, "Aumentam muito quando o movimento cresce"],
+      [3, "Acontecem de vez em quando"],
+      [4, "São raros e, quando acontecem, sabemos a causa"] ] }
+  ]},
+  { id: "mercado", pillar: "M", title: "Mercado e números", intro: "Como os clientes chegam até você e como você acompanha as vendas.", fields: [
+    { id: "m1", type: "score", label: "De onde vêm os seus novos clientes?", options: [
+      [1, "Basicamente indicação e quem aparece, sem controle"],
+      [2, "Indicação e redes sociais, sem uma rotina"],
+      [3, "Alguns canais definidos, com alguma rotina"],
+      [4, "Canais definidos e sei quanto cada um traz"] ] },
+    { id: "m2", type: "score", label: "Sobre orçamentos, propostas ou contatos de quem quer comprar:", options: [
+      [1, "Não acompanho; se o cliente não volta, fica por isso mesmo"],
+      [2, "Retorno quando lembro"],
+      [3, "Tenho controle, mas não sei quantos fecham"],
+      [4, "Controlo e sei a minha taxa de fechamento"] ] },
+    { id: "m3", type: "score", label: "E os clientes que já compraram de você?", options: [
+      [1, "Não tenho os contatos organizados"],
+      [2, "Tenho os contatos, mas não faço nada com eles"],
+      [3, "Faço alguma ação de vez em quando"],
+      [4, "Tenho uma rotina de relacionamento e recompra"] ] },
+    { id: "n1", type: "score", label: "Você sabe, hoje, o faturamento do mês passado, o ticket médio e quantos clientes atendeu?", options: [
+      [1, "Não"],
+      [2, "Só o faturamento aproximado"],
+      [3, "Sei a maioria desses números"],
+      [4, "Acompanho tudo em planilha ou sistema"] ] }
+  ]},
+  { id: "prioridade", title: "O que mais pesa hoje", intro: "Esta parte é a mais importante. Escreva do seu jeito.", fields: [
+    { id: "percepcao", type: "choice", label: "Qual frase mais parece com a sua empresa hoje?", required: true, options: [
+      ["M", "Preciso vender mais e conseguir mais clientes"],
+      ["P", "Meu produto ou serviço parece igual ao do concorrente e acabo competindo por preço"],
+      ["O", "Tudo depende de mim; a empresa não anda sem eu cobrar"],
+      ["X", "Não sei dizer onde está o problema"] ] },
+    { id: "problema", type: "textarea", label: "Com as suas palavras: qual é o maior problema da empresa hoje?", required: true, placeholder: "Ex.: perco muitos orçamentos e não sei por quê" },
+    { id: "tentou", type: "textarea", label: "O que você já tentou para resolver?", hint: "Opcional", required: false },
+    { id: "visao", type: "textarea", label: "Se isso estivesse resolvido daqui a 90 dias, o que mudaria para você?", hint: "Opcional", required: false }
+  ]},
+  { id: "momento", title: "Seu momento", intro: "Última etapa. Depois disso, o resultado aparece na hora.", fields: [
+    { id: "quando", type: "choice", label: "Quando você gostaria de começar a resolver isso?", required: true, options: ["Agora, a tempo do fim de ano", "Nos próximos 30 dias", "Em 2027", "Só estou pesquisando"] },
+    { id: "executor", type: "choice", label: "Quem colocaria as ações em prática?", required: true, options: ["Eu mesmo(a)", "Tenho alguém na equipe para isso", "Ainda não tenho ninguém"] },
+    { id: "tempo45", type: "choice", label: "Você consegue reservar 45 minutos por semana para um encontro de acompanhamento?", required: true, options: ["Sim", "Talvez, com algum esforço", "Não"] },
+    { id: "investimento", type: "choice", label: "O Acompanhamento POM 90 dias custa R$ 990 por mês, durante 3 meses. Esse investimento cabe no momento da empresa?", required: true, options: ["Sim", "Cabe, se eu enxergar o retorno", "Hoje não cabe"] },
+    { id: "consentimento", type: "checkbox", label: "Autorizo Clarissa Oliveira a usar estas respostas para avaliar minha empresa e falar comigo sobre a consultoria. Os dados não serão compartilhados com terceiros.", required: true }
+  ]}
+];
+
+/* ---------- Textos do resultado ---------- */
+const LEVELS = [
+  { min: 3, max: 5, n: 1, label: "Ponto crítico" },
+  { min: 6, max: 8, n: 2, label: "Em construção" },
+  { min: 9, max: 10, n: 3, label: "Estruturado" },
+  { min: 11, max: 12, n: 4, label: "Ponto forte" }
+];
+
+const LEVEL_TEXT = {
+  P: {
+    1: "O cliente provavelmente escolhe você por preço ou conveniência. Isso deixa a margem vulnerável e faz do desconto a principal ferramenta de venda.",
+    2: "Existe valor no que você vende, mas ele ainda não está claro para o cliente nem traduzido em preço e margem.",
+    3: "A oferta tem diferencial e algum controle de margem. O espaço está em criar e testar novas ofertas com método.",
+    4: "Oferta clara, margens conhecidas e o hábito de testar novidades. É uma alavanca para as outras frentes."
+  },
+  O: {
+    1: "A empresa depende de você para funcionar. Cada venda nova aumenta a sua carga, não a capacidade da empresa.",
+    2: "A operação funciona, mas no improviso. Quando o movimento cresce, atrasos e retrabalho tendem a aparecer.",
+    3: "Boa parte da operação tem processos definidos. O próximo passo é padronizar e medir para crescer sem perder qualidade.",
+    4: "A operação roda sem depender de você no dia a dia, o que libera seu tempo para estratégia e vendas."
+  },
+  M: {
+    1: "As vendas dependem de indicação e de quem aparece. Sem rotina comercial, oportunidades se perdem sem que você perceba.",
+    2: "Você tem canais e contatos, mas falta rotina: orçamentos sem retorno e clientes antigos sem relacionamento.",
+    3: "Existe rotina comercial e algum controle. O ganho está em medir a conversão e aproveitar melhor a base de clientes.",
+    4: "Você conhece seus canais e sua taxa de fechamento. Bom momento para testar novas ofertas ou novos públicos."
+  }
+};
+
+const PRIORITY = {
+  M: {
+    headline: "Transformar oportunidades em vendas, com rotina.",
+    now: "Novembro e dezembro concentram a maior intenção de compra do ano em Manaus: 13º salário, Black Friday e Natal. Quem tem rotina comercial aproveita. Quem espera o cliente voltar sozinho perde para quem chamou primeiro.",
+    cost: "Cada orçamento sem retorno e cada cliente antigo sem contato é uma venda que estava quase feita e pode ir para o concorrente.",
+    step: "Liste os orçamentos dos últimos 30 dias que não fecharam e os 20 melhores clientes do último ano. Até sexta, mande uma mensagem pessoal para cada um. Anote quantos respondem: esse é o seu primeiro indicador.",
+    months: [
+      "Diagnóstico das vendas e um controle simples de oportunidades. Ação rápida: reativar clientes antigos antes do pico.",
+      "Roteiro comercial e rotina de retorno de orçamentos, com treinamento da equipe.",
+      "Taxa de fechamento medida, rotina padronizada e plano do próximo trimestre."
+    ]
+  },
+  P: {
+    headline: "Deixar claro por que comprar de você e cobrar por isso.",
+    now: "No fim de ano, a disputa por preço aumenta. Quem não mostra o próprio valor entra na guerra de descontos e vende mais ganhando menos.",
+    cost: "Dar desconto para fechar reduz a margem justamente nos meses de maior volume e acostuma o cliente a esperar a próxima promoção.",
+    step: "Pergunte a cinco bons clientes: “por que você compra com a gente?”. Anote as palavras exatas. O diferencial que eles citarem é o que precisa aparecer no seu atendimento e na sua comunicação.",
+    months: [
+      "Diagnóstico de oferta, preços e margens. Ação rápida: um combo ou pacote de fim de ano que agregue valor sem desconto.",
+      "Tabela de produtos e serviços revisada e argumentos de valor para a equipe usar no atendimento.",
+      "Resultado da nova oferta medido, ajustes e plano do próximo trimestre."
+    ]
+  },
+  O: {
+    headline: "Fazer a empresa funcionar sem depender de você para tudo.",
+    now: "O pico de fim de ano aumenta pedidos, prazos e pressão. Operação no improviso vira atraso, retrabalho e cliente insatisfeito justamente quando há mais gente comprando.",
+    cost: "Enquanto tudo passa por você, o seu tempo é o limite da empresa, e não sobra espaço para vender, planejar ou descansar.",
+    step: "Durante uma semana, anote cada vez que alguém interromper você com uma pergunta ou problema. No fim, agrupe: as três situações que mais se repetem são os primeiros processos a definir.",
+    months: [
+      "Mapa da operação e dos gargalos. Ação rápida: checklist da etapa que mais gera erro, antes do pico.",
+      "Processos principais em uma página, responsáveis definidos e treinamento da equipe.",
+      "Rotina padronizada, indicadores de prazo e retrabalho, e plano do próximo trimestre."
+    ]
+  }
+};
+
+/* ---------- Estado ---------- */
+let state = { step: 0, answers: {} };
+const $ = (id) => document.getElementById(id);
+
+function save() {
+  try { localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+}
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEY) || "null"); if (s && s.answers) return s; } catch (e) {}
+  return null;
+}
+function clearSaved() { try { localStorage.removeItem(CONFIG.STORAGE_KEY); } catch (e) {} }
+
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+function optVal(o) { return Array.isArray(o) ? String(o[0]) : o; }
+function optText(o) { return Array.isArray(o) ? o[1] : o; }
+
+/* ---------- Renderização das etapas ---------- */
+function renderStep() {
+  const step = STEPS[state.step];
+  $("stepTitle").textContent = step.title;
+  $("stepIntro").textContent = step.intro || "";
+  $("stepName").textContent = step.pillar ? "Frente: " + step.title : step.title;
+  $("stepCount").textContent = "Etapa " + (state.step + 1) + " de " + STEPS.length;
+  $("barFill").style.width = Math.round((state.step / STEPS.length) * 100) + "%";
+  $("back").style.visibility = state.step === 0 ? "hidden" : "visible";
+  $("next").textContent = state.step === STEPS.length - 1 ? "Ver meu resultado" : "Continuar";
+
+  const html = step.fields.map((f) => {
+    const v = state.answers[f.id];
+    const hint = f.hint ? '<div class="hint">' + esc(f.hint) + "</div>" : "";
+    const lid = "lbl-" + f.id;
+    if (f.type === "text" || f.type === "tel") {
+      return '<div class="field" data-id="' + f.id + '"><label class="label" id="' + lid + '" for="f-' + f.id + '">' + esc(f.label) + "</label>" + hint +
+        '<input id="f-' + f.id + '" name="' + f.id + '" type="' + f.type + '"' + (f.autocomplete ? ' autocomplete="' + f.autocomplete + '"' : "") +
+        (f.placeholder ? ' placeholder="' + esc(f.placeholder) + '"' : "") + ' value="' + esc(v || "") + '"></div>';
+    }
+    if (f.type === "textarea") {
+      return '<div class="field" data-id="' + f.id + '"><label class="label" for="f-' + f.id + '">' + esc(f.label) + "</label>" + hint +
+        '<textarea id="f-' + f.id + '" name="' + f.id + '"' + (f.placeholder ? ' placeholder="' + esc(f.placeholder) + '"' : "") + ">" + esc(v || "") + "</textarea></div>";
+    }
+    if (f.type === "checkbox") {
+      return '<div class="field" data-id="' + f.id + '"><label class="check"><input type="checkbox" name="' + f.id + '"' + (v ? " checked" : "") + "><span>" + esc(f.label) + "</span></label></div>";
+    }
+    // choice / score
+    const opts = f.options.map((o) => {
+      const val = optVal(o);
+      return '<label class="opt"><input type="radio" name="' + f.id + '" value="' + esc(val) + '"' + (String(v) === val ? " checked" : "") + "><span>" + esc(optText(o)) + "</span></label>";
+    }).join("");
+    return '<fieldset class="field" data-id="' + f.id + '" style="border:0;padding:0;margin:22px 0"><legend class="label" style="padding:0">' + esc(f.label) + "</legend>" + hint + '<div class="opts" role="radiogroup">' + opts + "</div></fieldset>";
+  }).join("");
+  $("fields").innerHTML = html;
+}
+
+function collect() {
+  const step = STEPS[state.step];
+  const form = $("stepForm");
+  step.fields.forEach((f) => {
+    if (f.type === "checkbox") state.answers[f.id] = form.elements[f.id].checked;
+    else if (f.type === "choice" || f.type === "score") {
+      const el = form.querySelector('input[name="' + f.id + '"]:checked');
+      if (el) state.answers[f.id] = f.type === "score" ? Number(el.value) : el.value;
+    } else state.answers[f.id] = form.elements[f.id].value.trim();
+  });
+}
+
+function validate() {
+  const step = STEPS[state.step];
+  let firstBad = null;
+  step.fields.forEach((f) => {
+    const wrap = document.querySelector('[data-id="' + f.id + '"]');
+    wrap.classList.remove("invalid");
+    const old = wrap.querySelector(".err"); if (old) old.remove();
+    const req = f.type === "score" ? true : f.required;
+    const v = state.answers[f.id];
+    let msg = "";
+    if (req && (v === undefined || v === "" || v === false)) {
+      msg = f.type === "checkbox" ? "Para continuar, marque a autorização." : (f.type === "choice" || f.type === "score") ? "Escolha uma opção." : "Preencha este campo.";
+    } else if (f.type === "tel" && v && v.replace(/\D/g, "").length < 10) {
+      msg = "Informe o número com DDD.";
+    }
+    if (msg) {
+      wrap.classList.add("invalid");
+      const e = document.createElement("div"); e.className = "err"; e.textContent = msg; wrap.appendChild(e);
+      if (!firstBad) firstBad = wrap;
+    }
+  });
+  if (firstBad) { firstBad.scrollIntoView({ behavior: "smooth", block: "center" }); return false; }
+  return true;
+}
+
+/* ---------- Cálculo ---------- */
+function levelOf(sum) { return LEVELS.find((l) => sum >= l.min && sum <= l.max); }
+
+function compute(a) {
+  const scores = { P: a.p1 + a.p2 + a.p3, O: a.o1 + a.o2 + a.o3, M: a.m1 + a.m2 + a.m3 };
+  const min = Math.min(scores.P, scores.O, scores.M);
+  const tied = ["M", "P", "O"].filter((k) => scores[k] === min);
+  const priority = tied.includes(a.percepcao) ? a.percepcao : tied[0];
+  const gap = ["P", "O", "M"].includes(a.percepcao) && a.percepcao !== priority;
+  const allStrong = min >= 9;
+  const lowNumbers = a.n1 <= 2;
+
+  let fit;
+  if (a.tempo === "Ainda não abri" || a.investimento === "Hoje não cabe" || a.quando === "Só estou pesquisando") fit = "C";
+  else if (a.papel.startsWith("Dono") && (a.quando === "Agora, a tempo do fim de ano" || a.quando === "Nos próximos 30 dias") &&
+           a.tempo45 !== "Não" && a.executor !== "Ainda não tenho ninguém") fit = "A";
+  else fit = "B";
+
+  return { scores, priority, gap, allStrong, lowNumbers, fit };
+}
+
+/* ---------- Mensagem para WhatsApp ---------- */
+function buildMessage(a, r) {
+  const s = r.scores;
+  const lines = [
+    "Olá, Clarissa! Fiz o pré-diagnóstico POM.",
+    "",
+    "*Nome:* " + a.nome,
+    "*Empresa:* " + a.empresa + " (" + a.segmento + ", " + a.cidade + ")",
+    "*Empresa há:* " + a.tempo + " | *Equipe:* " + a.equipe + " | *Faturamento:* " + a.faturamento,
+    "*Papel:* " + a.papel,
+    "",
+    "*Resultado:* Produto " + s.P + "/12 · Operação " + s.O + "/12 · Mercado " + s.M + "/12",
+    "*Prioridade sugerida:* " + PILLARS[r.priority].name,
+    "*Maior problema:* " + a.problema
+  ];
+  if (a.tentou) lines.push("*Já tentei:* " + a.tentou);
+  if (a.visao) lines.push("*Em 90 dias, quero:* " + a.visao);
+  lines.push("", "*Começar:* " + a.quando + " | *Quem executa:* " + a.executor + " | *45 min/semana:* " + a.tempo45 + " | *Investimento:* " + a.investimento);
+  lines.push("", "Ref. " + r.fit + "-" + r.priority + " · P" + a.p1 + a.p2 + a.p3 + " O" + a.o1 + a.o2 + a.o3 + " M" + a.m1 + a.m2 + a.m3 + " N" + a.n1 + " · " + (a.origem || "direto"));
+  lines.push("", r.fit === "C" ? "Gostaria de receber o material e saber da próxima turma." : "Quero agendar a conversa de 30 minutos.");
+  return lines.join("\n");
+}
+
+function waLink(msg) { return "https://wa.me/" + CONFIG.WHATSAPP + "?text=" + encodeURIComponent(msg); }
+function waConfigured() { return /^55\d{10,11}$/.test(CONFIG.WHATSAPP) && !/^55\d{2}0{8,9}$/.test(CONFIG.WHATSAPP); }
+
+/* ---------- Envio opcional para planilha ---------- */
+function sendToSheet(a, r) {
+  if (!CONFIG.SHEETS_WEBHOOK_URL) return;
+  const row = Object.assign({ data: new Date().toISOString() }, a, {
+    produto: r.scores.P, operacao: r.scores.O, mercado: r.scores.M,
+    prioridade: PILLARS[r.priority].name, perfil: r.fit
+  });
+  try {
+    fetch(CONFIG.SHEETS_WEBHOOK_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(row) }).catch(() => {});
+  } catch (e) {}
+}
+
+/* ---------- Tela de resultado ---------- */
+function renderResult() {
+  const a = state.answers;
+  const r = compute(a);
+  const pr = PRIORITY[r.priority];
+  const first = esc(a.nome.split(" ")[0]);
+  const msg = buildMessage(a, r);
+
+  const bars = ["P", "O", "M"].map((k) => {
+    const s = r.scores[k], lv = levelOf(s), pct = Math.round(((s - 3) / 9) * 88 + 12);
+    return '<div class="score-row"><div class="top"><span class="name">' + PILLARS[k].name + "</span>" +
+      '<span class="lv lv-' + lv.n + '">' + lv.label + " · " + s + "/12</span></div>" +
+      '<div class="bar" role="img" aria-label="' + PILLARS[k].name + ": " + s + ' de 12"><i class="fill-' + lv.n + '" style="width:' + pct + '%"></i></div>' +
+      "<p>" + LEVEL_TEXT[k][lv.n] + "</p></div>";
+  }).join("");
+
+  const gapHtml = r.gap
+    ? '<div class="callout"><strong>Um ponto de atenção.</strong> Você apontou ' + PILLARS[a.percepcao].name + " como o que mais pesa, e as suas respostas mostram que " + PILLARS[r.priority].name +
+      " também precisa de atenção. É comum: o problema que a gente sente nem sempre é a causa. Falta de vendas, por exemplo, pode vir de uma oferta pouco clara ou de uma operação que não aguenta crescer. Isso é exatamente o que vale investigar juntos.</div>"
+    : "";
+
+  const strongHtml = r.allStrong
+    ? '<div class="callout"><strong>Sua empresa já tem uma boa base nas três frentes.</strong> Nesse caso, o acompanhamento serve para acelerar: testar novas ofertas, novos públicos ou novos canais com método, sem tirar o foco da operação.</div>'
+    : "";
+
+  const numbersHtml = r.lowNumbers
+    ? '<div class="callout"><strong>Sobre os números.</strong> Sem acompanhar faturamento, ticket médio e número de clientes, toda decisão vira opinião. Por isso, um dos primeiros entregáveis do acompanhamento é um painel com 3 a 5 indicadores e o ponto de partida da sua empresa.</div>'
+    : "";
+
+  let ctaTitle, ctaText, ctaBtn;
+  if (r.fit === "A") {
+    ctaTitle = "Sua empresa tem o perfil do acompanhamento.";
+    ctaText = "O próximo passo é uma conversa de 30 minutos, presencial em Manaus ou por vídeo, para aprofundar este pré-diagnóstico. Você sai dela com uma visão mais clara do que fazer primeiro, mesmo que decida não contratar.";
+    ctaBtn = "Enviar respostas e agendar conversa";
+  } else if (r.fit === "B") {
+    ctaTitle = "Vamos ver se este é o momento certo.";
+    ctaText = "Seu negócio tem pontos que o acompanhamento ajuda a resolver, mas talvez o momento ainda não seja agora. Envie suas respostas: eu leio com atenção e digo, com sinceridade, se faz sentido começar já ou mais adiante.";
+    ctaBtn = "Enviar respostas para a Clarissa";
+  } else {
+    ctaTitle = a.tempo === "Ainda não abri" ? "O acompanhamento é para empresas que já estão funcionando." : "Entendo que agora não é o momento.";
+    ctaText = "Envie suas respostas para receber o checklist de vendas de fim de ano e ser avisado(a) quando a próxima turma abrir.";
+    ctaBtn = "Receber o checklist e entrar na lista";
+  }
+  const warn = waConfigured() ? "" : '<div class="warn noprint">Configuração pendente: defina o número de WhatsApp no início do arquivo (CONFIG.WHATSAPP) antes de publicar.</div>';
+
+  $("result").innerHTML =
+    '<span class="pill">Pré-diagnóstico POM</span>' +
+    "<h1>" + first + ", este é o retrato inicial da " + esc(a.empresa) + ".</h1>" +
+    '<p class="lead">É uma leitura feita a partir das suas respostas, não um diagnóstico completo. Ela mostra onde estão os sinais mais fortes e por onde faz sentido começar.</p>' +
+
+    '<div class="card"><div class="kicker">As três frentes</div>' + bars + "</div>" +
+
+    '<div class="card priority"><div class="kicker">Prioridade sugerida: ' + PILLARS[r.priority].name + "</div>" +
+      "<h2>" + pr.headline + "</h2>" +
+      (a.problema ? '<p class="small" style="margin-top:12px">Você escreveu:</p><div class="quote">“' + esc(a.problema) + "”</div>" : "") +
+      "<h3>Por que olhar para isso agora</h3><p>" + pr.now + "</p>" +
+      "<h3>O custo de deixar para depois</h3><p>" + pr.cost + "</p>" +
+      gapHtml + strongHtml + numbersHtml +
+    "</div>" +
+
+    '<div class="card"><div class="kicker">Para fazer esta semana</div><h3>Um primeiro passo, por conta própria</h3><p>' + pr.step + "</p></div>" +
+
+    '<div class="card"><div class="kicker">Como eu ajudaria a ' + esc(a.empresa) + "</div>" +
+      "<h3>Acompanhamento POM 90 dias, com foco em " + PILLARS[r.priority].name + "</h3>" +
+      "<p>O diagnóstico olha as três frentes, porque elas estão ligadas: vender mais exige uma oferta clara e uma operação que aguente o volume. A execução se concentra na prioridade que mais destrava o negócio.</p>" +
+      '<div class="months">' +
+        '<div class="month"><b>Mês 1 · Diagnóstico e foco</b>' + pr.months[0] + "</div>" +
+        '<div class="month"><b>Mês 2 · Construção</b>' + pr.months[1] + "</div>" +
+        '<div class="month"><b>Mês 3 · Resultado</b>' + pr.months[2] + "</div>" +
+      "</div>" +
+      '<ul class="ticks"><li>Visita de diagnóstico na sua empresa (em Manaus)</li><li>Encontro semanal de 45 minutos, com resumo no WhatsApp</li><li>Painel de indicadores para comparar o antes e o depois</li><li>Relatório de 90 dias e plano do próximo trimestre</li></ul>' +
+      '<p class="small">Por que acompanhamento, e não só uma dica: plano sem rotina perde para o dia a dia. O encontro semanal, os prazos e os indicadores são o que faz a mudança acontecer de verdade.</p>' +
+      '<p class="small"><strong>Investimento:</strong> R$ 990 por mês, ciclo de 90 dias. Se, ao fim do primeiro mês, não fizer sentido seguir, você fica com o diagnóstico e o plano e não paga as mensalidades seguintes.</p>' +
+    "</div>" +
+
+    '<div class="card cta"><h2>' + ctaTitle + "</h2><p>" + ctaText + "</p>" +
+      '<a class="btn btn-wa" id="waBtn" href="' + waLink(msg) + '" target="_blank" rel="noopener">' + ctaBtn + "</a>" +
+      '<p class="small" style="margin-top:10px">Abre o WhatsApp com as suas respostas já escritas. É só tocar em enviar.</p>' + warn +
+    "</div>" +
+
+    '<div class="actions noprint"><button class="btn btn-ghost" id="printBtn" type="button">Salvar em PDF</button><button class="btn btn-ghost" id="restart" type="button">Refazer</button></div>';
+
+  $("printBtn").onclick = () => window.print();
+  $("restart").onclick = () => { clearSaved(); state = { step: 0, answers: { origem: state.answers.origem } }; show("intro"); };
+  sendToSheet(a, r);
+}
+
+/* ---------- Navegação ---------- */
+function show(id) {
+  ["intro", "form", "result"].forEach((s) => { $(s).hidden = s !== id; });
+  window.scrollTo(0, 0);
+}
+
+$("stepForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  collect();
+  if (!validate()) return;
+  if (state.step < STEPS.length - 1) {
+    state.step++; save(); renderStep(); window.scrollTo(0, 0);
+    const first = $("fields").querySelector("input, textarea"); if (first && first.type !== "radio") first.focus({ preventScroll: true });
+  } else {
+    state.done = true; save(); renderResult(); show("result");
+  }
+});
+$("back").addEventListener("click", () => { collect(); if (state.step > 0) { state.step--; save(); renderStep(); window.scrollTo(0, 0); } });
+$("start").addEventListener("click", () => { state.step = 0; renderStep(); show("form"); });
+$("resume").addEventListener("click", () => {
+  if (state.done) { renderResult(); show("result"); } else { renderStep(); show("form"); }
+});
+
+(function init() {
+  const origem = new URLSearchParams(location.search).get("origem");
+  const saved = load();
+  if (saved && Object.keys(saved.answers).length > 1) { state = saved; $("resumeBox").hidden = false; $("resume").textContent = saved.done ? "Ver meu resultado novamente" : "Continuar de onde parei"; }
+  if (origem) state.answers.origem = origem.slice(0, 40);
+})();
+</script>
+</body>
+</html>

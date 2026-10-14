@@ -697,6 +697,22 @@ Considerar a saída livre do mês 1 no planejamento: não comprometa despesas co
 
 ---
 
+## Parte 12 | Pré-diagnóstico POM (formulário de aplicação)
+
+Arquivos em `docs/pre-diagnostico/`: `index.html` (formulário pronto) e `Guia_Pre_Diagnostico_POM.md` (regras, textos, uso e publicação).
+
+**Como entra neste plano:**
+- **Chamada principal do conteúdo digital** passa a ser "Faça o pré-diagnóstico gratuito da sua empresa" (link na bio). O "envie POM" continua para quem prefere falar direto.
+- **Café com Empresários (29/10):** QR code no fechamento, com `?origem=cafe`.
+- **Parceiros:** um link por parceiro (`?origem=nome-do-parceiro`).
+- **Rede quente:** não obrigar. Agendar direto e pedir o formulário como preparo da conversa.
+- **Conversa de 30 minutos:** comece pela frase que a pessoa escreveu e use as respostas de nota 1 para aprofundar (Guia, seção 6).
+- **Linha de base:** as notas de Produto, Operação e Mercado entram no Diagnóstico POM do cliente e são refeitas no relatório de 90 dias.
+
+**Preparação (incluir na Fase 0, até 18/10):** configurar o WhatsApp no arquivo, publicar no Netlify, ligar a planilha Google e testar com três perfis. Preparar o checklist de vendas de fim de ano, que é prometido aos contatos de perfil C.
+
+---
+
 **Notas finais**
 
 - Nenhuma publicação, anúncio, contrato ou envio foi executado por este documento. Datas e metas são escolhas de planejamento.
